@@ -13,18 +13,18 @@ const createPlaylist = asyncHandler(async (req, res) => {
         owner: userId
     });
 
-    const createdPlaylist = await Playlist.findById(playlist?._id).select("-owner");
+    const createdPlaylist = await Playlist.findById(playlist?._id);
     if (!createdPlaylist) {
         throw new ApiError(500, "Failed to create playlist");
     }
 
-    return res.status(200).json(new ApiResponse(200, { createdPlaylist }, "Playlist created successfully"));
+    return res.status(200).json(new ApiResponse(200,  createdPlaylist , "Playlist created successfully"));
 })
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
 
-    const playlists = await Playlist.find({ owner: userId }).select("-owner -videos").sort({ createdAt: -1 });
+    const playlists = await Playlist.find({ owner: userId }).sort({ createdAt: -1 });
 
     return res.status(200).json(new ApiResponse(200, playlists, "Playlists found successfully"));
 })

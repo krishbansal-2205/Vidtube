@@ -89,6 +89,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
                     { $match: { isPublished: true } },
                     {
                         $project: {
+                            videoFile: 1,
                             title: 1,
                             description: 1,
                             thumbnail: 1,

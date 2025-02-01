@@ -17,6 +17,6 @@ router
 router.route("/add/:videoId/:playlistId").patch(verifyPlaylistOwner, addVideoToPlaylist);
 router.route("/remove/:videoId/:playlistId").patch(verifyPlaylistOwner, removeVideoFromPlaylist);
 
-router.route("/user/:userId").get(getUserPlaylists);
+router.route("/user").get(getUserPlaylists);
 
 export default router
