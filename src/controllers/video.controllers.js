@@ -30,12 +30,18 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
         const totalVideos = await Video.countDocuments(filter);
 
+        if (!videos.length) {
+            return res.status(404).json(new ApiError(404, "No videos found"));
+        }
+
         return res.status(200).json(
             new ApiResponse(200, { videos, total: totalVideos }, "Videos retrieved successfully")
         );
     } catch (error) {
         console.error("Error fetching videos:", error);
-        throw new ApiError(500, "Failed to fetch videos");
+        if (!(error instanceof ApiError)) {
+            throw new ApiError(500, "Failed to fetch videos");
+        }
     }
 });
 
