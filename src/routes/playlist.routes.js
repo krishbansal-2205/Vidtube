@@ -6,17 +6,17 @@ const router = Router();
 
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
-router.route("/").post(createPlaylist)
+router.route("/").post(createPlaylist)  //non paramaterised routes should be at the beginning otherwise gives error
 
+router.route("/user").get(getUserPlaylists);
+router.route("/add/:videoId/:playlistId").patch(verifyPlaylistOwner, addVideoToPlaylist);
+router.route("/remove/:videoId/:playlistId").patch(verifyPlaylistOwner, removeVideoFromPlaylist);
 router
     .route("/:playlistId")
     .get(getPlaylistById)
     .patch(verifyPlaylistOwner, updatePlaylist)
     .delete(verifyPlaylistOwner, deletePlaylist);
 
-router.route("/add/:videoId/:playlistId").patch(verifyPlaylistOwner, addVideoToPlaylist);
-router.route("/remove/:videoId/:playlistId").patch(verifyPlaylistOwner, removeVideoFromPlaylist);
 
-router.route("/user").get(getUserPlaylists);
 
 export default router

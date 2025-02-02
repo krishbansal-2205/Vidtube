@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Playlist } from "../models/playlist.models.js";
+import mongoose from "mongoose";
 
 const createPlaylist = asyncHandler(async (req, res) => {
     const { name, description } = req.body;
@@ -18,7 +19,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Failed to create playlist");
     }
 
-    return res.status(200).json(new ApiResponse(200,  createdPlaylist , "Playlist created successfully"));
+    return res.status(200).json(new ApiResponse(200, createdPlaylist, "Playlist created successfully"));
 })
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
@@ -34,7 +35,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
     const playlist = await Playlist.aggregate([
         {
             $match: {
-                _id: playlistId
+                _id: new mongoose.Types.ObjectId(playlistId)
             }
         }, {
             $lookup: {
@@ -83,7 +84,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
     const playlist = await Playlist.findByIdAndUpdate(req.playlist?._id, {
         $addToSet: { videos: videoId }
-    }, { new: true }).select("-owner -videos");
+    }, { new: true });
 
     if (!playlist) {
         throw new ApiError(500, "Failed to add video to playlist");
@@ -97,7 +98,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
     const playlist = await Playlist.findByIdAndUpdate(req.playlist?._id, {
         $pull: { videos: videoId }
-    }, { new: true }).select("-owner -videos");
+    }, { new: true });
 
     if (!playlist) {
         throw new ApiError(500, "Failed to remove video from playlist");
@@ -122,7 +123,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
             name,
             description
         }
-    }, { new: true }).select("-owner -videos");
+    }, { new: true });
 
     if (!playlist) {
         throw new ApiError(500, "Failed to update playlist");
