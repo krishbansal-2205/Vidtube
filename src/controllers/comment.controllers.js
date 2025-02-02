@@ -70,7 +70,7 @@ const updateComment = asyncHandler(async (req, res) => {
             throw new ApiError(404, "Comment not found");
         }
 
-        if (comment.owner.toString() !== req.user?._id) {
+        if (comment.owner.toString() !== req.user?._id.toString()) {
             throw new ApiError(403, "Access denied");
         }
         comment.content = content;
@@ -93,7 +93,7 @@ const deleteComment = asyncHandler(async (req, res) => {
             throw new ApiError(404, "Comment not found");
         }
 
-        if (comment.owner.toString() !== req.user?._id) {
+        if (comment.owner.toString() !== req.user?._id.toString()) {
             throw new ApiError(403, "Access denied");
         }
 

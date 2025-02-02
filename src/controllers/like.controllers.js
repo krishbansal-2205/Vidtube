@@ -78,7 +78,11 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 const getLikedVideos = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
     const videos = await Like.aggregate([
-        { $match: { likedBy: userId }, video: { $exists: true } },
+        {
+            $match: {
+                $and: [{ likedBy: userId }, { video: { $exists: true } }]
+            }
+        },
         {
             $lookup: {
                 from: "videos",
@@ -101,12 +105,15 @@ const getLikedVideos = asyncHandler(async (req, res) => {
                     }
                 ]
             }
+        }
+        , {
+            $addFields: {
+                video: { $arrayElemAt: ["$video", 0] }
+            }
         }, {
             $project: {
-                video: { $first: "$video" },
                 _id: 0,
                 __v: 0,
-                likedBy: 0
             }
         }
     ])

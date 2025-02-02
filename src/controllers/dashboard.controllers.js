@@ -29,7 +29,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
         const videos = await Video.find({ owner: userId }).sort({ createdAt: -1 });
         const totalVideoLikes = await Like.countDocuments({ video: { $in: videos.map(video => video._id) } });
 
-        return res.status(200).json(new ApiResponse(200, { totalVideos, totalSubscribers, totalVideoViews, totalVideoLikes }, "Channel stats found successfully"));
+        return res.status(200).json(new ApiResponse(200, { totalVideos, totalSubscribers, totalViews: totalVideoViews[0]?.totalViews, totalVideoLikes }, "Channel stats found successfully"));
     } catch (error) {
         console.log("Error getting channel stats", error);
         throw new ApiError(500, "Failed to get channel stats");
