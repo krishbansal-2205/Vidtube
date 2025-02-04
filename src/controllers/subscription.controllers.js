@@ -38,40 +38,45 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     const { channelId } = req.params;
 
-    const subscribers = await Subscription.aggregate([
-        { $match: { channel: new mongoose.Types.ObjectId(channelId) } },
-        {
-            $lookup: {
-                from: "users",
-                localField: "subscriber",
-                foreignField: "_id",
-                as: "subscriber",
-                pipeline: [
-                    {
-                        $project: {
-                            username: 1,
+    try {
+        const subscribers = await Subscription.aggregate([
+            { $match: { channel: new mongoose.Types.ObjectId(channelId) } },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "subscriber",
+                    foreignField: "_id",
+                    as: "subscriber",
+                    pipeline: [
+                        {
+                            $project: {
+                                username: 1,
+                            }
                         }
-                    }
-                ]
+                    ]
+                }
+            }, {
+                $addFields: {
+                    subscriber: { $arrayElemAt: ["$subscriber", 0] }
+                }
+            }, {
+                $sort: {
+                    createdAt: -1
+                }
+            }, {
+                $project: {
+                    _id: 0,
+                    channel: 0,
+                    __v: 0
+                }
             }
-        }, {
-            $addFields: {
-                subscriber: { $arrayElemAt: ["$subscriber", 0] }
-            }
-        }, {
-            $sort: {
-                createdAt: -1
-            }
-        }, {
-            $project: {
-                _id: 0,
-                channel: 0,
-                __v: 0
-            }
-        }
-    ])
+        ])
 
-    return res.status(200).json(new ApiResponse(200, subscribers, "Subscribers found successfully"));
+        return res.status(200).json(new ApiResponse(200, subscribers, "Subscribers found successfully"));
+    } catch (error) {
+        console.log("Error getting subscribers", error);
+        throw new ApiError(500, "Failed to get subscribers");
+    }
 })
 
 const getSubscribedChannels = asyncHandler(async (req, res) => {

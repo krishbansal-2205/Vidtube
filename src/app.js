@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser";
+import { ApiError } from "./utils/ApiError.js";
 
 const app = express();
 
@@ -40,4 +41,23 @@ app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/playlists", playlistRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 
+app.use((err, req, res, next) => {
+    console.error("Error Middleware Caught:", err);
+
+    // Check if the error is an instance of ApiError
+    if (err instanceof ApiError) {
+        return res.status(err.statusCode).json({
+            success: false,
+            message: err.message,
+            data: err.data,
+            errors: err.errors
+        });
+    }
+
+    // Default error response
+    return res.status(500).json({
+        success: false,
+        message: "Internal Server Error"
+    });
+});
 export { app }

@@ -24,7 +24,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Failed to like video");
     }
 
-    return res.status(200).json(new ApiResponse(200, {}, "Video liked successfully"));
+    return res.status(200).json(new ApiResponse(200, createdLike, "Video liked successfully"));
 })
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
@@ -48,7 +48,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Failed to like comment");
     }
 
-    return res.status(200).json(new ApiResponse(200, {}, "Comment liked successfully"));
+    return res.status(200).json(new ApiResponse(200, createdLike, "Comment liked successfully"));
 })
 
 const toggleTweetLike = asyncHandler(async (req, res) => {
@@ -72,7 +72,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
         throw new ApiError(500, 'Failed to like tweet');
     }
 
-    return res.status(200).json(new ApiResponse(200, {}, 'Tweet liked successfully'));
+    return res.status(200).json(new ApiResponse(200, createdLike, 'Tweet liked successfully'));
 })
 
 const getLikedVideos = asyncHandler(async (req, res) => {
